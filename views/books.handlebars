@@ -1,0 +1,28 @@
+<h1>Books</h1>
+
+<ul>
+    {{#each books}}
+    <li>
+        <strong>{{title}}</strong> by {{author}} ({{genre}})
+        - <a href="/books/{{id}}">Details</a>
+    </li>
+    {{/each}}
+</ul>
+
+<div>
+    {{#if page}}
+    {{#ifCond page '>' 1}}
+    <a href="/books?page={{decrement page}}">Previous</a>
+    {{/ifCond}}
+    {{/if}}
+
+    {{#each (range 1 totalPages)}}
+    <a href="/books?page={{this}}">{{this}}</a>
+    {{/each}}
+
+    {{#if page}}
+    {{#ifCond page '<' totalPages}}
+    <a href="/books?page={{increment page}}">Next</a>
+    {{/ifCond}}
+    {{/if}}
+</div>
