@@ -1,16 +1,16 @@
 /*General Setup and Colors*/
 :root {
-    --royal-blue #4169e1;
-    --brown #8b4513;
-    --orange #ff8c00;
-    --light-bg #fafafa;
-    --light-border: e3e3e3;
+    --royal-blue: #4169e1;
+    --brown: #8b4513;
+    --orange: #ff8c00;
+    --light-bg: #fafafa;
+    --light-border: #e3e3e3;
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
-    padding: 0;;
+    padding: 0;
 }
 
 body {
@@ -66,7 +66,7 @@ nav a:focus {
     outline: none;
 }
 
-nav a: focus-visible {
+nav a:focus-visible {
     box-shadow: 0 0 0 4px var(--foc-color);
     border-radius: 4px;
 }
