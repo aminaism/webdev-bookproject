@@ -142,12 +142,13 @@ app.get('/books', (req, res) => {
   `;
 
   //Total count rows
-  const countSql= `SELECT COUNT(*)AS count FROM (${baseSql})`;
+  const countSql= `SELECT COUNT(*) AS count FROM (${baseSql})`;
+  
   db.get(countSql, params, (countErr, countRow) => {
     if (countErr) {
       console.error('Count error:', countErr);
       return res.status(500).send('Database error');
-    }
+  }
 
     const totalCount = countRow ? countRow.count : 0;
     const totalPages = totalCount > 0 ? Math.ceil(totalCount / limit) : 0;
@@ -179,7 +180,7 @@ const offset = (page - 1) * limit;
 
 // Prepare data SQL
 const dataParams = params.slice();
-const dataSql = `${baseSql} LIMIT? OFFSET? `;
+const dataSql = `${baseSql} LIMIT ? OFFSET ?`;
 dataParams.push(limit,offset);
 
 db.all(dataSql,dataParams, (dataErr, books) =>{
@@ -192,28 +193,28 @@ db.all(dataSql,dataParams, (dataErr, books) =>{
 //Fetch genres
 db.all('SELECT * FROM genres ORDER BY name COLLATE NOCASE', [],(gErr, genres) => {
 if(gErr) {
-  console.error('Genres fetch error:',gErr);
+  console.error('Genres fetch error:', gErr);
   return res.status(500).send('Database error');
 }
 
 //Helper to build URLs query params
 const makeUrl = (p) => {
-  const part = [`page=${p}`];
-  if (search) parseInt.push(`search=${encodeURIComponent(search)}`);
+  const parts = [`page=${p}`];
+  if (search) parts.push(`search=${encodeURIComponent(search)}`);
   if(selectedGenre) parts.push(`genre=${encodeURIComponent(selectedGenre)}`);
-  return `books?${parts.join('&')}`;
+  return `/books?${parts.join('&')}`;
 };
 
 //Build pages array for template
-const pages= Array.from ({ length: totalPages }, (_, i) => {
+const pages = Array.from({ length: totalPages }, (_, i) => {
 const num = i + 1;
-return { num, url: make Url(num), active: num === page };
+return { num, url: makeUrl(num), active: num === page };
 });
 
-const prevPage = page > 1 ? { num: page - 1, url: makeUrl(page-1) } : null;
+const prevPage = page > 1 ? { num: page - 1, url: makeUrl(page - 1) } : null;
 const nextPage = page < totalPages ? { num: page + 1, url: makeUrl(page + 1) } : null;
 
-res.render('books', {
+return res.render('books', {
   books,
   page,
   totalPages,
@@ -228,8 +229,6 @@ res.render('books', {
 });
 });
 });
-
-
 
 // Book details
 app.get('/books/:id', (req, res) => {
