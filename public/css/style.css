@@ -56,7 +56,68 @@ nav a {
     text-decoration: none;
     font-weight: 600;
     padding: 0.25rem;
-    transition: color var(--transition);
+    transition: color var(--transition), opacity var(--transition);
 }
 
+nav a:hover,
+nav a:focus {
+    color: var(--orange);
+    opacity: 0.95;
+    outline: none;
+}
+
+nav a: focus-visible {
+    box-shadow: 0 0 0 4px var(--foc-color);
+    border-radius: 4px;
+}
+
+/*Books page*/
+.books-page {
+    max-width:1100px;
+    margin: 2rem auto;
+    padding: 0 1 rem;
+}
+
+.books-page h1 {
+    text-align: center;
+    font-family: "Playfair Display", serif;
+    color: var(--royal-blue);
+    margin: 0 0 1.5rem 0;
+}
+
+/*Search and filter form*/
+
+.search-form {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.search-form input,
+.search-form select {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--light-border);
+    border-radius: 6px;
+    min-width: 150px;
+    background: #fff;
+    font: inherit;
+    color: inherit;
+}
+
+.search-form button {
+    background-color: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    transition: background-color var(--transition), transform var(--transition);
+}
+
+.search-form button:hover,
+.search-form button:focus {
+    background-color: var(--brown);
+}
 
