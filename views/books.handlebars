@@ -35,7 +35,56 @@
             <img src="{{image_url}}" alt="{{title}} cover" />
             {{/if}}
 
-            <div>
+            <div class="book-info">
+                <h2 id="book-title-{{id}}">{{title}}</h2> 
 
-                
+                {{#if author}} <p><strong>Author:</strong> {{author}}</p>{{/if}}
+                {{#if genre}} <p><strong>Genre:</strong> {{genre}}</p>{{/if}}
+               
+                {{#if description}}
+                <p class="book-description">{{description}}</p>
+                {{/if}}
+
+                <a class="details-btn" href="/books/{{id}}">Details</a>
             </div>
+        </article>
+        {{/each}}
+    </div>
+{{else}}
+<p class="no-results">No books found. Try a different search or genre.</p>
+{{/if}}
+ 
+
+{{!-- Pagination:simple prev/next using page & totalpages --}}
+  {{#if pages}}
+    <nav class="pagination" role="navigation" aria-label="Pagination">
+      {{#if prevPage}}<a href="{{prevPage.url}}" aria-label="Previous page">‹ Prev</a>{{/if}}
+
+      {{#each pages}}
+        <a href="{{url}}" class="{{#if active}}active{{/if}}"
+           {{#if active}}aria-current="page"{{/if}}>
+          {{num}}
+        </a>
+      {{/each}}
+      {{#if nextPage}}<a href="{{nextPage.url}}" aria-label="Next page">Next ›</a>{{/if}}
+    </nav>
+  {{else}}
+    {{!-- Fallback simple pagination --}}
+    {{#if totalPages}}
+      {{#if (gt totalPages 1)}}
+        <nav class="pagination" role="navigation" aria-label="Pagination">
+            {{#if (gt page 1)}}
+            <a href="/books?page={{decrement page}}{{#if search}}&search={{search}}{{/if}}{{#if selectedGenre}}&genre={{selectedGenre}}{{/if}}">‹ Prev</a>
+          {{/if}}
+
+          <span class="page-counter" aria-hidden="true">Page {{page}} of {{totalPages}}</span>
+
+          {{#if (lt page totalPages)}}
+            <a href="/books?page={{increment page}}{{#if search}}&search={{search}}{{/if}}{{#if selectedGenre}}&genre={{selectedGenre}}{{/if}}">Next ›</a>
+          {{/if}}
+        </nav>
+      {{/if}}
+    {{/if}}
+  {{/if}}
+
+</div>
