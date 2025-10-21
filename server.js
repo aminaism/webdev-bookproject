@@ -183,7 +183,31 @@ const dataSql = `${baseSql} LIMIT? OFFSET? `;
 dataParams.push(limit,offset);
 
 db.all(dataSql,dataParams, (dataErr, books) =>{
-  if ()
+  if (dataErr) {
+    console.error('Data fetch error:', dataErr);
+    return res.status(500).send('Database error');
+
+  }
+
+//Fetch genres
+db.all('SELECT * FROM genres ORDER BY name COLLATE NOCASE', [],(gErr, genres) => {
+if(gErr) {
+  console.error('Genres fetch error:',gErr);
+  return res.status(500).send('Database error');
+}
+
+
+
+
+
+}
+ )
+
+
+
+
+
+
 }
 
 )
