@@ -2,4 +2,40 @@
 
 <h1>Books</h1>
 
+<!--Search & Filter form so query is shown in url / pagination -->
+<form class="search-form" action="/books" method="get" aria-label="Search books">
+<label class="sr-only" for="search">Search by title or author</label>
+<input type="text" id="search" name="search" placeholder="Search..." aria-label="Search books">
+<button type="submit">Search</button>
+</form>
 
+{{!--Genres filter --}}
+{{#if genres}}
+<label class="sr only" for="genre">Filter by genre</label>
+<select id="genre" name="genre" aria-label="Filter by genre">
+    <option value="">All genres</option>
+    {{#each genres}}
+    <option value="{{id}}"
+    {{#ifCond../selectedGenre '=='id}}selected{{/ifCond}}>
+    {{name}}
+    </option>
+    {{/each}}
+    </select>
+    {{/if}}
+
+    <button type="submit">Search</button>
+    </form>
+
+    {{!--Book grid --}}
+    {{#if books.length}}
+    <div class="books-grid" aria-live="polite">
+        {{#each books}}
+        <article class="book-card"aria-labelledby="book-title-{{id}}">
+            {{if image_url}}
+            <img src="{{image_url}}" alt="{{title}} cover" />
+            {{/if}}
+
+            <div>
+
+                
+            </div>
