@@ -117,26 +117,70 @@ app.get('/', (req, res) => res.redirect('/books'));
 
 // Books with pagination
 app.get('/books', (req, res) => {
-  const page = parseInt(req.query.page) || 1;
   const limit = 3;
-  const offset = (page - 1) * limit;
+  const rawPage = parseInt(req.query.page, 10) || 1;
+  const search = (req.query.search || '').trim();
+  const selectedGenre = req.query.genre || '';
 
-  db.all(`
+  // Build the base WHERE
+  let where = 'WHERE (books.title LIKE ? OR authors.name LIKE ?)';
+  const params = [`%${search}%`, `%${search}%`];
+
+  if (selectedGenre) {
+    where += ' AND genres.id = ?';
+    params.push(selectedGenre);
+  }
+
+  //Base SQL 
+  const baseSql= `
     SELECT books.id, books.title, books.description, authors.name AS author, genres.name AS genre
     FROM books
     LEFT JOIN authors ON books.author_id = authors.id
     LEFT JOIN genres ON books.genre_id = genres.id
-    LIMIT ? OFFSET ?
-  `, [limit, offset], (err, books) => {
-    if (err) return res.status(500).send(err.message);
+    ${where}
+    ORDER BY books.title COLLATE NOCASE
+  `;
 
-    db.get("SELECT COUNT(*) AS count FROM books", (err, row) => {
-      if (err) return res.status(500).send(err.message);
-      const totalPages = Math.ceil(row.count / limit);
-      res.render('books', { books, page, totalPages });
-    });
+  //Total count rows
+  const countSql= `SELECT COUNT(*)AS count FROM (${baseSql})`;
+  db.get(countSql, params, (countErr, countRow) => {
+    if (countErr) {
+      console.error('Count error:', countErr);
+      return res.status(500).send('Database error');
+    }
+
+    const totalCount = countRow ? countRow.count : 0;
+    const totalPages = totalCount > 0 ? Math.ceil(totalCount / limit) : 0;
+
+//If no rows, still send genres 
+if (totalCount === 0) {
+  return db.all('SELECT * FROM genres ORDER BY name COLLATE NOCASE', [], (gErr, genres) => {
+  if (gErr) {
+    console.error('Genres fetch error:', gErr);
+    return res.status(500).send('Database error');
+}
+return res.render('books', {
+    books: [],
+    page: 1,
+    totalPages: 0,
+    pages: [],
+    prevPage: null,
+    nextPage: null,
+    search,
+    selectedGenre,
+    genres
   });
 });
+}
+
+
+
+
+
+
+
+
+
 
 // Book details
 app.get('/books/:id', (req, res) => {
@@ -159,5 +203,3 @@ app.get('/books/:id', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
-
-
