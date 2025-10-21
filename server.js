@@ -196,42 +196,71 @@ if(gErr) {
   return res.status(500).send('Database error');
 }
 
+//Helper to build URLs query params
+const makeUrl = (p) => {
+  const part = [`page=${p}`];
+  if (search) parseInt.push(`search=${encodeURIComponent(search)}`);
+  if(selectedGenre) parts.push(`genre=${encodeURIComponent(selectedGenre)}`);
+  return `books?${parts.join('&')}`;
+};
 
+//Build pages array for template
+const pages= Array.from ({ length: totalPages }, (_, i) => {
+const num = i + 1;
+return { num, url: make Url(num), active: num === page };
+});
 
+const prevPage = page > 1 ? { num: page - 1, url: makeUrl(page-1) } : null;
+const nextPage = page < totalPages ? { num: page + 1, url: makeUrl(page + 1) } : null;
 
-
-}
- )
-
-
-
-
-
-
-}
-
-)
-
-
-
-
+res.render('books', {
+  books,
+  page,
+  totalPages,
+  pages,
+  prevPage,
+  nextPage,
+  search,
+  selectedGenre,
+  genres  
+   });
+  });
+});
+});
+});
 
 
 
 // Book details
 app.get('/books/:id', (req, res) => {
-  const bookId = req.params.id;
-  db.get(`
-    SELECT books.id, books.title, books.description, authors.name AS author, genres.name AS genre
+  const bookId = parseInt(req.params.id, 10);
+  if(Number.isNaN(bookId)) {
+    return res.status(400).send('Invalid book id');
+  }
+
+  const sql = `
+   SELECT books.id, books.title, books.description, authors.name AS author, genres.name AS genre
     FROM books
     LEFT JOIN authors ON books.author_id = authors.id
     LEFT JOIN genres ON books.genre_id = genres.id
     WHERE books.id = ?
-  `, [bookId], (err, book) => {
-    if (err) return res.status(500).send(err.message);
-    if (!book) return res.status(404).send("Book not found");
-    res.render('book-detail', { book });
-  });
+  `;
+
+  db.get(sql, [bookId], (err, book) => {
+    if (err) {
+      console.error('Error fetching book by id:', err);
+      return res.status(500).send('Database error');
+    }
+    
+//If not found, return a 404 page
+if (!book) {
+  //If there is a 404 template, render it
+  //Otherwise, send a simple message
+  return res.status(404).send('Book not found');
+}
+//Render book details
+return res.render('book-detail', { book });
+});
 });
 
 
