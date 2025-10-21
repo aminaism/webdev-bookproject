@@ -121,3 +121,44 @@ nav a: focus-visible {
     background-color: var(--brown);
 }
 
+.search-form button:focus-visible {
+    box-shadow: 0 0 0 4px var(--focus-color);
+    outline:none;
+}
+
+/* Book cards grid */
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+/*Card*/
+.book-card {
+    background: #fff;
+    border:1px solid var(--light-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: transform var(--transition), box-shadow var(--transition);
+    border-top: 4px solid var(--royal-blue);
+    display: flex;
+    flex-direction: column;
+}
+
+.book-card:hover,
+.book-card:focus-within {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+/*Image*/
+.book-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    /*for browser compatibility*/
+    aspect-ratio: 16 / 9;
+    max-height: 320px;
+    display: block;
+}
