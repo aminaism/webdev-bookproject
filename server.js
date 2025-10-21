@@ -173,8 +173,20 @@ return res.render('books', {
 });
 }
 
+//Clamp page in valid range
+const page = Math.max(1,Math.min(rawPage, totalPages));
+const offset = (page - 1) * limit;
 
+// Prepare data SQL
+const dataParams = params.slice();
+const dataSql = `${baseSql} LIMIT? OFFSET? `;
+dataParams.push(limit,offset);
 
+db.all(dataSql,dataParams, (dataErr, books) =>{
+  if ()
+}
+
+)
 
 
 
