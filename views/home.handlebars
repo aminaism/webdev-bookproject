@@ -1,3 +1,24 @@
-<h1>Welcome to Loom Library</h1>
-<p>Browse our collection of books and authors.</p>
-   
+<div class="container books-page">
+  <h1>Welcome to Loom Library</h1>
+  <p style="text-align:center; max-width:720px; margin:0.5rem auto 1.5rem;">
+    Discover a curated selection of books across various genres. Explore our collection and
+    find your next great read.
+  </p>
+
+  <div class="books-grid">
+    {{!--3 featured books--}}
+    {{#if featured}}
+      {{#each featured}}
+        <article class="book-card">
+          <div class="book-info">
+            <h2>{{title}}</h2>
+            {{#if author}}<p><strong>Author:</strong> {{author}}</p>{{/if}}
+            <a class="details-btn" href="/books/{{id}}">Details</a>
+          </div>
+        </article>
+      {{/each}}
+    {{else}}
+      <p style="text-align:center; width:100%;">Check the Books page to browse the library.</p>
+    {{/if}}
+  </div>
+</div>

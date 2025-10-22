@@ -2,26 +2,25 @@
 
 <h1>Books</h1>
 
-<!--Search & Filter form so query is shown in url / pagination -->
+<!--Search & Filter form so query is shown-->
 <form class="search-form" action="/books" method="get" aria-label="Search books">
 <label class="sr-only" for="search">Search by title or author</label>
 <input type="text" id="search" name="search" placeholder="Search..." aria-label="Search books">
-<button type="submit">Search</button>
-</form>
+
+
 
 {{!--Genres filter --}}
 {{#if genres}}
-<label class="sr only" for="genre">Filter by genre</label>
+<label class="sr-only" for="genre">Filter by genre</label>
 <select id="genre" name="genre" aria-label="Filter by genre">
     <option value="">All genres</option>
     {{#each genres}}
-    <option value="{{id}}"
-    {{#ifCond../selectedGenre '=='id}}selected{{/ifCond}}>
+    <option value="{{id}}"{{#ifCond ../selectedGenre '==' id}}selected{{/ifCond}}>
     {{name}}
-    </option>
-    {{/each}}
-    </select>
-    {{/if}}
+  </option>
+{{/each}}
+</select>
+{{/if}}
 
     <button type="submit">Search</button>
     </form>
@@ -30,17 +29,15 @@
     {{#if books.length}}
     <div class="books-grid" aria-live="polite">
         {{#each books}}
-        <article class="book-card"aria-labelledby="book-title-{{id}}">
-            {{if image_url}}
+        <article class="book-card" aria-labelledby="book-title-{{id}}">
+            {{#if image_url}}
             <img src="{{image_url}}" alt="{{title}} cover" />
             {{/if}}
 
             <div class="book-info">
                 <h2 id="book-title-{{id}}">{{title}}</h2> 
-
                 {{#if author}} <p><strong>Author:</strong> {{author}}</p>{{/if}}
                 {{#if genre}} <p><strong>Genre:</strong> {{genre}}</p>{{/if}}
-               
                 {{#if description}}
                 <p class="book-description">{{description}}</p>
                 {{/if}}
@@ -69,7 +66,7 @@
       {{#if nextPage}}<a href="{{nextPage.url}}" aria-label="Next page">Next ›</a>{{/if}}
     </nav>
   {{else}}
-    {{!-- Fallback simple pagination --}}
+    {{!-- Simple pagination --}}
     {{#if totalPages}}
       {{#if (gt totalPages 1)}}
         <nav class="pagination" role="navigation" aria-label="Pagination">

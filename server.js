@@ -2,10 +2,25 @@ const express = require('express');
 const path = require('path');
 const { engine }=require ('express-handlebars') // load the handlebars package for express
 const sqlite3=require('sqlite3');
+const session = require('express-session');
+const bcrypt= require('bcryptjs');
 
 const app = express();
 const PORT = 4321;
 
+//Body parsers 
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
+//Session middleware
+app.use(session({
+  secret: 'replace-this-with-a-long-random-string',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { httpOnly: true, maxAge: 1000 * 60 * 60 } // 1 hour
+}));
+
+//Database setup
 const db = new sqlite3.Database(path.join(__dirname, 'db', 'my-project-db.sqlite3.db'), (err) => {
  if (err) {
   console.error('Error opening database:', err.message);
@@ -14,8 +29,23 @@ const db = new sqlite3.Database(path.join(__dirname, 'db', 'my-project-db.sqlite
 }
 });
 
-//Tables and insert sample data 
+//Add local db
+app.locals.db = db;
 
+//current user to views
+app.use((req, res, next) => {
+  res.locals.currentUser = req.session.user || null;
+  next();
+});
+
+//Routes
+const authRoutes = require('./routes/auth')(db);
+app.use('/auth', authRoutes);
+
+
+
+
+//Tables and insert sample data 
 db.serialize(() => {
   // Authors table
   db.run(`
@@ -47,7 +77,7 @@ db.serialize(() => {
     )
   `);
 
-  // Insert authors (if table empty)
+  // Insert authors 
   db.get("SELECT COUNT(*) as count FROM authors", (err, row) => {
     if (row.count === 0) {
       db.run(`INSERT INTO authors (name,bio) VALUES
@@ -58,7 +88,7 @@ db.serialize(() => {
     }
   });
 
-  // Insert genres (if table empty)
+  // Insert genres 
   db.get("SELECT COUNT(*) as count FROM genres", (err, row) => {
     if (row.count === 0) {
       db.run(`INSERT INTO genres (name) VALUES
@@ -69,7 +99,7 @@ db.serialize(() => {
     }
   });
 
-  // Insert books (if table empty)
+  // Insert books 
   db.get("SELECT COUNT(*) as count FROM books", (err, row) => {
     if (row.count === 0) {
       db.run(`INSERT INTO books (title, description, author_id, genre_id) VALUES
@@ -89,12 +119,34 @@ db.serialize(() => {
 
 });
 
-// Setup Handlebars with helpers
+// Users table
+db.run(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE,
+    password_hash TEXT
+  )
+`);
+
+// insert admin if missing 
+db.get("SELECT COUNT(*) AS count FROM users WHERE username = ?", ['admin'], (err, row) => {
+  if (err) { console.error('User check error', err); return; }
+  if (!row || row.count === 0) {
+    const adminPass = 'wdf#2025';
+    const hash = bcrypt.hashSync(adminPass, 10);
+    db.run("INSERT INTO users (username,password_hash) VALUES (?, ?)", ['admin', hash]);
+    console.log('Inserted admin user (username: admin)');
+  }
+});
+
+
+// Setup Handlebars 
 app.engine('handlebars', engine({
   helpers: {
-    increment: (value) => parseInt(value) + 1,
-    decrement: (value) => parseInt(value) - 1,
+    increment: (value) => parseInt(value, 10) + 1,
+    decrement: (value) => parseInt(value, 10) - 1,
     range: (start, end) => Array.from({ length: end - start + 1 }, (_, i) => start + i),
+   
     ifCond: function (v1, operator, v2, options) {
       switch (operator) {
         case '==': return (v1 == v2) ? options.fn(this) : options.inverse(this);
@@ -103,17 +155,67 @@ app.engine('handlebars', engine({
         case '>': return (v1 > v2) ? options.fn(this) : options.inverse(this);
         default: return options.inverse(this);
       }
+    },
+    
+    //simple equality
+    ifEquals: function (a, b, options) {
+      return String(a) === String(b) ? options.fn(this) : options.inverse(this);
     }
   }
 }));
+
+
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Redirect homepage to /books
-app.get('/', (req, res) => res.redirect('/books'));
+// Homepage
+app.get('/', (req, res) => {
+  const db = req.app.locals.db;
+  if (!db) return res.status(500).send('Database not initialized');
+
+  //Fetch 3 books 
+  const sql = `
+    SELECT books.id, books.title, books.description, authors.name AS author, genres.name AS genre
+    FROM books
+    LEFT JOIN authors ON books.author_id = authors.id
+    LEFT JOIN genres ON books.genre_id = genres.id
+    ORDER BY books.id DESC
+    LIMIT 3
+  `;
+  db.all(sql, [], (err, featured) => {
+    if (err) {
+      console.error('Error fetching featured books:', err);
+      return res.status(500).send('Database error');
+    }
+    res.render('home', {
+      title: 'Home — Loom Library',
+      active: 'home',
+      year: new Date().getFullYear(),
+      featured
+    });
+  });
+});
+
+//About page
+app.get('/about', (req, res) => {
+  res.render('about', {
+    title: 'About — Loom Library',
+    active: 'about',
+    year: new Date().getFullYear()
+  });
+});
+
+// Contact page
+app.get('/contact', (req, res) => {
+  res.render('contact', {
+    title: 'Contact — Loom Library',
+    active: 'contact',
+    year: new Date().getFullYear()
+  });
+});
 
 // Books with pagination
 app.get('/books', (req, res) => {
@@ -122,7 +224,7 @@ app.get('/books', (req, res) => {
   const search = (req.query.search || '').trim();
   const selectedGenre = req.query.genre || '';
 
-  // Build the base WHERE
+  //Base WHERE
   let where = 'WHERE (books.title LIKE ? OR authors.name LIKE ?)';
   const params = [`%${search}%`, `%${search}%`];
 
@@ -153,7 +255,7 @@ app.get('/books', (req, res) => {
     const totalCount = countRow ? countRow.count : 0;
     const totalPages = totalCount > 0 ? Math.ceil(totalCount / limit) : 0;
 
-//If no rows, still send genres 
+//Still send genres 
 if (totalCount === 0) {
   return db.all('SELECT * FROM genres ORDER BY name COLLATE NOCASE', [], (gErr, genres) => {
   if (gErr) {
@@ -197,7 +299,7 @@ if(gErr) {
   return res.status(500).send('Database error');
 }
 
-//Helper to build URLs query params
+//Build URLs query params
 const makeUrl = (p) => {
   const parts = [`page=${p}`];
   if (search) parts.push(`search=${encodeURIComponent(search)}`);
@@ -205,7 +307,7 @@ const makeUrl = (p) => {
   return `/books?${parts.join('&')}`;
 };
 
-//Build pages array for template
+//Array for template
 const pages = Array.from({ length: totalPages }, (_, i) => {
 const num = i + 1;
 return { num, url: makeUrl(num), active: num === page };
@@ -254,7 +356,6 @@ app.get('/books/:id', (req, res) => {
 //If not found, return a 404 page
 if (!book) {
   //If there is a 404 template, render it
-  //Otherwise, send a simple message
   return res.status(404).send('Book not found');
 }
 //Render book details
@@ -267,3 +368,5 @@ return res.render('book-detail', { book });
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
+
+// Reference: Lectures from week 3,4,5,6

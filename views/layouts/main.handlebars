@@ -1,36 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/public/css/style.css">
-    <title>Loom Library</title>
-    <link rel="stylesheet" href="/css/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <title>{{title}}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- Load Inter (head) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-    
-<!--Header with Menu--->
-<header>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/books">Books</a></li>
-            <li><a href="/About">About</a></li>
-            <li><a href="/Contact">Contact</a></li>
-        </ul>
-    </nav>
+  <header>
+     <div class="container">
+      <nav>
+        <a href="/" class="brand" aria-label="Loom Library home">
+    <span class="brand-pill">Loom Library</span>
+    </a>
+  <ul>
+    <li><a href="/" class="{{#ifEquals active 'home'}}active{{/ifEquals}}">Home</a></li>
+    <li><a href="/books" class="{{#ifEquals active 'books'}}active{{/ifEquals}}">Books</a></li>
+    <li><a href="/about" class="{{#ifEquals active 'about'}}active{{/ifEquals}}">About</a></li>
+    <li><a href="/contact" class="{{#ifEquals active 'contact'}}active{{/ifEquals}}">Contact</a></li>
+  </ul>
+  
+  
+      <div class="nav-login">
+      {{#if currentUser}}
+        <span>Logged in as {{currentUser.username}}</span>
+        <form method="post" action="/auth/logout">
+          <button type="submit">Logout</button>
+        </form>
+      {{else}}
+        <a href="/auth/login">Login</a>
+      {{/if}}
+    </div>
+  </div>
+</nav>
+</nav>
+</div>
 </header>
 
+  {{{body}}}
 
-<!--Page content will be injected here-->
-<main>
-    {{{body}}}
-</main>
-
-<!---Footer-->
-<footer>
-    <p>&copy; 2025. All rights reserved.</p>
-</footer>
+ <footer>
+    <div class="container">
+      <p>&copy; 2025 Loom Library. All rights reserved.</p>
+    </div>
+  </footer>
 </body>
 </html>

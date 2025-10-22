@@ -1,8 +1,21 @@
 import express from "express";
 const router = express.Router();
 
+
+//Require login to see books
+function requireLogin(req, res, next) {
+  if (req.session && req.session.user) return next();
+  return res.redirect('/auth/login');
+}
+
+// To all routes
+router.use(requireLogin);
+
 router.get("/", (req,res) => {
    const db = req.app.locals.db; //SQlite db
+   if (!db) {
+    return res.status(500).send('Database not initialized');
+   }
    const page = parseInt (req.query.page) || 1;
    const limit = 3;
    const offset = (page - 1) * limit;
@@ -51,6 +64,22 @@ router.get("/", (req,res) => {
         });
     });
 });
+
+// Book detail page
+router.get("/:id", requireLogin, (req, res) => {
+  const db = req.app.locals.db;
+  db.get(`
+    SELECT books.*, authors.name AS author, genres.name AS genre
+    FROM books
+    LEFT JOIN authors ON books.author_id = authors.id
+    LEFT JOIN genres ON books.genre_id = genres.id
+    WHERE books.id = ?
+  `, [req.params.id], (err, book) => {
+    if (err || !book) return res.status(404).send('Not found');
+    res.render('book-detail', { title: book.title, book });
+  });
+});
+
 
 
 export default router;
