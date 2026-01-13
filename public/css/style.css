@@ -19,8 +19,7 @@
 --max-width: 1100px;
 }
 
-
-
+/*Base Styles*/
 * {
     box-sizing: border-box;
     margin: 0;
@@ -49,10 +48,11 @@ h1, h2, h3 {
   margin-bottom: 0.5rem;
 }
 
-/*Different sizes for headings*/
-h1 { font-size: 2rem; }
-h2 { font-size: 1.35rem; }
-h3 { font-size: 1.1rem; }
+/*Different sizes for headings (fluid)*/
+/* scale headings smoothly across devices */
+h1 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); }
+h2 { font-size: clamp(1.1rem, 2.2vw, 1.5rem); }
+h3 { font-size: clamp(1rem, 1.8vw, 1.15rem); }
 
 
 /*Header & Navigation*/
@@ -74,7 +74,7 @@ header {
 }
 
 /*Brand*/
-nav.brand {
+a.brand {
     color: #fff;
     font-family: "Playfair Display", serif;
     font-size: 1.25rem;
@@ -82,8 +82,17 @@ nav.brand {
     letter-spacing: 0.4px;
 }
 
-/*Nav links*/
+/* putting header nav a horizontal flex row so login can sit at the end */
+header nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 
+/* push login to the right */
+.nav-login { margin-left: auto; }
+
+/*Nav links*/
 nav ul {
     display: flex;
     gap: 1.2rem;
@@ -207,7 +216,7 @@ nav a:focus-visible {
     align-self: flex-start;
     background: var(--royal-blue);
     color: var(--card-bg);
-    padding: 0.45rem 0.8rem;
+    padding: 0.55rem 0.9rem;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 700;
@@ -249,7 +258,7 @@ nav a:focus-visible {
 .pagination a:hover,
 .pagination a:focus {
     background: rgba(255, 140, 0, 0.08);
-    color: var(--orange);
+    color: var(--accent-orange);
 }
 
 /*Footer*/
@@ -262,7 +271,6 @@ footer {
 }
 
 /*Responsive Design*/
-
 @media (max-width:760px) {
     .search-form {
     flex-direction: column;
@@ -271,6 +279,12 @@ footer {
     .books-grid {
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     }  
+    /* make action buttons full width on small screens for easier tapping */
+    .details-btn, .btn-primary, .btn-secondary {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
 }
 
 @media (max-width: 480px) {
@@ -347,10 +361,12 @@ header nav ul.open {
     align-items: start;
     margin: 1.25rem 0;
 }
-@media (min-width: 900px) {
-    .admin-grid {
-        grid-template-columns: 1fr 360px;
-    }
+/* admin: 1 column mobile, 2 columns tablet, 3 columns on wide screens */
+@media (min-width: 700px) {
+    .admin-grid { grid-template-columns: 1fr 360px; }
+}
+@media (min-width: 1200px) {
+    .admin-grid { grid-template-columns: 1fr 360px 300px; }
 }
 
 /* Form and button styles */
@@ -378,11 +394,21 @@ header nav ul.open {
 }
 .btn-secondary {
     /* higher contrast secondary button for accessibility */
-    background: #f7f7f7; /* slightly off-white */
-    color: #3b2b16; /* darker brown for better contrast */
+    background: #f7f7f7; 
+    color: var(--brown); /* darker brown for better contrast */
     border: 1px solid #e0d7cc;
     padding: 0.5rem 0.8rem;
     border-radius: 8px;
+}
+
+/* Making the buttons and controls smoother */
+.details-btn, .btn-primary, .btn-secondary, .pagination a, .search-form button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
 }
 
 /* Focus states for accessibility */
