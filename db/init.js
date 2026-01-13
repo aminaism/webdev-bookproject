@@ -34,20 +34,34 @@ await db.exec(`
     );
   `);
 
+  // Users table (for authentication & admin management)
+await db.exec(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL
+  );
+`);
+
+
 //Sample authors
 await db.exec (`
   INSERT INTO authors (name,bio) VALUES
   ('J.K. Rowling', 'Author of Harry Potter series'),
   ('Sally Rooney', 'Author of Intermezzo'),
-  ('Jane Austen', 'Author of Sense and Sensibility');
+  ('Jane Austen', 'Author of Sense and Sensibility'),
+  ('George Orwell', 'Author of 1984 and Animal Farm'),
+  ('Isabel Allende', 'Chilean novelist, author of The House of the Spirits');
 `);
 
 //Sample genres
 await db.exec (`
   INSERT INTO genres (name) VALUES
-  ('Fantasy')
-  ('Psychological')
-  ('Romance')
+  ('Fantasy'),
+  ('Psychological'),
+  ('Romance'),
+  ('Historical'),
+  ('Science Fiction');
 `);
 
 //Sample books

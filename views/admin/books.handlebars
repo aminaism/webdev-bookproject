@@ -1,0 +1,30 @@
+<div class="container books-page admin-grid">
+  <main>
+    <h1>Manage Books</h1>
+    <p><a class="btn-secondary" href="/admin/books/new">Add new book</a></p>
+
+    {{#if books.length}}
+      <ul class="admin-list">
+        {{#each books}}
+          <li>
+            <strong>{{this.title}}</strong>
+            <div class="muted">{{this.author}} — {{this.genre}}</div>
+            <div style="margin-top:0.5rem">
+              <a class="btn-primary" href="/admin/books/{{this.id}}/edit">Edit</a>
+              <form action="/admin/books/{{this.id}}/delete" method="POST" style="display:inline;margin-left:0.5rem;">
+                <button class="btn-secondary" type="submit">Delete</button>
+              </form>
+            </div>
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p>No books found.</p>
+    {{/if}}
+  </main>
+
+  <aside>
+    <h2>Quick help</h2>
+    <p>Use this panel to add or edit books. Forms are mobile-first and will stack on small screens.</p>
+  </aside>
+</div>

@@ -1,0 +1,43 @@
+<div class="container books-page admin-grid">
+  <main>
+    <h1>{{#if book.id}}Edit Book{{else}}Add Book{{/if}}</h1>
+
+    <form class="book-form" action="{{#if book.id}}/admin/books/{{book.id}}/edit{{else}}/admin/books/new{{/if}}" method="POST" enctype="multipart/form-data">
+      <div class="form-field">
+        <label for="title">Title</label>
+        <input id="title" name="title" value="{{book.title}}" required />
+      </div>
+
+      <div class="form-field">
+        <label for="author">Author</label>
+        <select id="author" name="author_id">
+          {{#each authors}}
+            <option value="{{this.id}}" {{#ifEquals this.id ../book.author_id}}selected{{/ifEquals}}>{{this.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="genre">Genre</label>
+        <select id="genre" name="genre_id">
+          {{#each genres}}
+            <option value="{{this.id}}" {{#ifEquals this.id ../book.genre_id}}selected{{/ifEquals}}>{{this.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="description">Description</label>
+        <textarea id="description" name="description">{{book.description}}</textarea>
+      </div>
+
+      <div>
+        <button class="btn-primary" type="submit">Save</button>
+      </div>
+    </form>
+  </main>
+
+  <aside>
+    <p>Tip: fill title, choose author and genre, then save. Images can be added later.</p>
+  </aside>
+</div>

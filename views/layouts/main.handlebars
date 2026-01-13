@@ -13,34 +13,37 @@
 </head>
 <body>
   <header>
-     <div class="container">
+    <div class="container">
       <nav>
         <a href="/" class="brand" aria-label="Loom Library home">
-    <span class="brand-pill">Loom Library</span>
-    </a>
-  <ul>
-    <li><a href="/" class="{{#ifEquals active 'home'}}active{{/ifEquals}}">Home</a></li>
-    <li><a href="/books" class="{{#ifEquals active 'books'}}active{{/ifEquals}}">Books</a></li>
-    <li><a href="/about" class="{{#ifEquals active 'about'}}active{{/ifEquals}}">About</a></li>
-    <li><a href="/contact" class="{{#ifEquals active 'contact'}}active{{/ifEquals}}">Contact</a></li>
-  </ul>
-  
-  
-      <div class="nav-login">
-      {{#if currentUser}}
-        <span>Logged in as {{currentUser.username}}</span>
-        <form method="post" action="/auth/logout">
-          <button type="submit">Logout</button>
-        </form>
-      {{else}}
-        <a href="/auth/login">Login</a>
-      {{/if}}
+          <span class="brand-pill">Loom Library</span>
+        </a>
+
+        <ul>
+          <li><a href="/" class="{{#ifEquals active 'home'}}active{{/ifEquals}}">Home</a></li>
+          <li><a href="/books" class="{{#ifEquals active 'books'}}active{{/ifEquals}}">Books</a></li>
+          <li><a href="/about" class="{{#ifEquals active 'about'}}active{{/ifEquals}}">About</a></li>
+          <li><a href="/contact" class="{{#ifEquals active 'contact'}}active{{/ifEquals}}">Contact</a></li>
+        </ul>
+
+        <!-- Mobile nav toggle -->
+        <button id="nav-toggle" class="nav-toggle" aria-expanded="false" aria-label="Toggle menu">
+          <span class="hamburger" aria-hidden="true"></span>
+        </button>
+
+        <div class="nav-login">
+          {{#if currentUser}}
+            <span>Logged in as {{currentUser.username}}</span>
+            <form method="post" action="/auth/logout">
+              <button type="submit">Logout</button>
+            </form>
+          {{else}}
+            <a href="/auth/login">Login</a>
+          {{/if}}
+        </div>
+      </nav>
     </div>
-  </div>
-</nav>
-</nav>
-</div>
-</header>
+  </header>
 
   {{{body}}}
 

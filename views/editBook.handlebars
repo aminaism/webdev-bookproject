@@ -1,0 +1,26 @@
+<h2>Edit Book</h2>
+
+<form action="/admin/books/{{book.id}}/edit" method="POST" enctype="multipart/form-data">
+  <label for="title">Title:</label>
+  <input type="text" name="title" id="title" value="{{book.title}}" required>
+
+  <label for="author">Author:</label>
+  <select name="author" id="author" required>
+    {{#each authors}}
+      <option value="{{this.id}}" {{#if (eq this.id ../book.author_id)}}selected{{/if}}>{{this.name}}</option>
+    {{/each}}
+  </select>
+
+  <label for="description">Description:</label>
+  <textarea name="description" id="description">{{book.description}}</textarea>
+
+  <label for="image">Book Cover (PNG/JPG):</label>
+  <input type="file" name="image" id="image" accept="image/png, image/jpeg">
+  
+  {{#if book.image}}
+    <p>Current Cover:</p>
+    <img src="/uploads/{{book.image}}" alt="{{book.title}}" width="150">
+  {{/if}}
+
+  <button type="submit">Update Book</button>
+</form>

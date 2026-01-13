@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 module.exports = (db) => {
 
@@ -30,7 +30,7 @@ module.exports = (db) => {
 
   // handle logout
   router.post('/logout', (req, res) => {
-    req.session.destroy(() => res.redirect('/login'));
+    req.session.destroy(() => res.redirect('/auth/login'));
   });
 
   return router;

@@ -1,0 +1,26 @@
+<div class="container books-page admin-grid">
+  <main>
+    <h1>Manage Users</h1>
+    <p><a class="btn-secondary" href="/admin/users/new">Add user</a></p>
+
+    {{#if users.length}}
+      <ul class="admin-list">
+        {{#each users}}
+          <li>
+            {{this.username}}
+            <a class="btn-primary" href="/admin/users/{{this.id}}/edit">Edit</a>
+            <form action="/admin/users/{{this.id}}/delete" method="POST" style="display:inline;margin-left:0.5rem;">
+              <button class="btn-secondary" type="submit">Delete</button>
+            </form>
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p>No users found.</p>
+    {{/if}}
+  </main>
+
+  <aside>
+    <p>Usernames must be unique. Passwords are stored hashed.</p>
+  </aside>
+</div>

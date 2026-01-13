@@ -1,0 +1,18 @@
+<div class="container books-page admin-grid">
+  <main>
+    <h1>Add Genre</h1>
+    <form action="/admin/genres/new" method="POST">
+      <div class="form-field">
+        <label for="name">Name</label>
+        <input id="name" name="name" required />
+      </div>
+      <div>
+        <button class="btn-primary" type="submit">Add</button>
+      </div>
+    </form>
+  </main>
+
+  <aside>
+    <p>Short names are best (e.g. "Fantasy", "Non-fiction").</p>
+  </aside>
+</div>

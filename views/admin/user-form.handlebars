@@ -1,0 +1,27 @@
+<div class="container books-page admin-grid">
+  <main>
+    <h1>{{title}}</h1>
+
+    {{#if error}}<p style="color:red">{{error}}</p>{{/if}}
+
+    <form method="POST">
+      <div class="form-field">
+        <label for="username">Username</label>
+        <input id="username" name="username" value="{{user.username}}" required />
+      </div>
+
+      <div class="form-field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" />
+      </div>
+
+      <div>
+        <button class="btn-primary" type="submit">Save</button>
+      </div>
+    </form>
+  </main>
+
+  <aside>
+    <p>Leave password blank to keep the current password.</p>
+  </aside>
+</div>

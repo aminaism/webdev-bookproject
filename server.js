@@ -1,3 +1,13 @@
+/*
+Amino Mohamed Farah - moam24cs@student.ju.se
+
+Target grade: 5
+
+Project: Loom Library - Web Dev Fun 2025
+
+Administrator login: admin
+Administrator password: "wdf#2025" ---> "$2b$10$T4Fw6L4dG9QWpPblGjTcgOIqnTBXcBGjKWTujo4mOWFeTF37jqCdm"
+*/
 const express = require('express');
 const path = require('path');
 const { engine }=require ('express-handlebars') // load the handlebars package for express
@@ -14,7 +24,7 @@ app.use(express.json());
 
 //Session middleware
 app.use(session({
-  secret: 'replace-this-with-a-long-random-string',
+  secret: process.env.SESSION_SECRET || 'dev-secret',
   resave: false,
   saveUninitialized: false,
   cookie: { httpOnly: true, maxAge: 1000 * 60 * 60 } // 1 hour
@@ -38,10 +48,25 @@ app.use((req, res, next) => {
   next();
 });
 
+// flash messages middleware (simple session-based flash)
+app.use((req, res, next) => {
+  if (req.session && req.session.flash) {
+    res.locals.flash = req.session.flash;
+    delete req.session.flash;
+  } else {
+    res.locals.flash = null;
+  }
+  next();
+});
+
 //Routes
 const authRoutes = require('./routes/auth')(db);
 app.use('/auth', authRoutes);
 
+
+// Admin routes (user management)
+const adminRoutes = require('./routes/admin');
+app.use('/admin', adminRoutes);
 
 
 
@@ -81,9 +106,11 @@ db.serialize(() => {
   db.get("SELECT COUNT(*) as count FROM authors", (err, row) => {
     if (row.count === 0) {
       db.run(`INSERT INTO authors (name,bio) VALUES
-        ('J.K. Rowling', 'Author of Harry Potter series'),
-        ('Sally Rooney', 'Author of Intermezzo'),
-        ('Jane Austen', 'Author of Sense and Sensibility')
+        ('J.K. Rowling', 'Author of the Harry Potter series'),
+        ('Sally Rooney', 'Author of Normal People and Conversations with Friends'),
+        ('Jane Austen', 'Author of Sense and Sensibility'),
+        ('George Orwell', 'Author of 1984 and Animal Farm'),
+        ('Isabel Allende', 'Chilean novelist, author of The House of the Spirits')
       `);
     }
   });
@@ -94,7 +121,9 @@ db.serialize(() => {
       db.run(`INSERT INTO genres (name) VALUES
         ('Fantasy'),
         ('Psychological'),
-        ('Romance')
+        ('Romance'),
+        ('Historical'),
+        ('Science Fiction')
       `);
     }
   });

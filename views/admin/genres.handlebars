@@ -1,0 +1,25 @@
+<div class="container books-page admin-grid">
+  <main>
+    <h1>Manage Genres</h1>
+    <p><a class="btn-secondary" href="/admin/genres/new">Add new genre</a></p>
+
+    {{#if genres.length}}
+      <ul class="admin-list">
+        {{#each genres}}
+          <li>
+            {{this.name}}
+            <form action="/admin/genres/{{this.id}}/delete" method="POST" style="display:inline;margin-left:0.5rem;">
+              <button class="btn-secondary" type="submit">Delete</button>
+            </form>
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p>No genres found.</p>
+    {{/if}}
+  </main>
+
+  <aside>
+    <p>Genres help you categorize books. Keep names short and clear.</p>
+  </aside>
+</div>

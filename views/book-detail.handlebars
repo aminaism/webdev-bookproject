@@ -1,8 +1,9 @@
-<h1>{{book.title}}</h1>
-<p>{{book.description}}</p>
-<p><strong>Author:</strong>{{book.author}}</p>
-<p><strong>Genre:</strong> {{book.genre}}</p>
-<p><strong>Description:</strong> {{book.description}}</p>
+<div class="container books-page">
+	<h1>{{book.title}}</h1>
+	{{#if book.author}}<p><strong>Author:</strong> {{book.author}}</p>{{/if}}
+	{{#if book.genre}}<p><strong>Genre:</strong> {{book.genre}}</p>{{/if}}
+	{{#if book.description}}<p>{{book.description}}</p>{{/if}}
 
-<a href="/books">Back to all books</a>
+	<p><a href="/books">Back to all books</a></p>
+</div>
 
