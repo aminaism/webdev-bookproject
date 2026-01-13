@@ -8,6 +8,10 @@ Project: Loom Library - Web Dev Fun 2025
 Administrator login: admin
 Administrator password: "wdf#2025" ---> "$2b$10$T4Fw6L4dG9QWpPblGjTcgOIqnTBXcBGjKWTujo4mOWFeTF37jqCdm"
 */
+
+/* Some code in this project is adapted from lectures and labs conducted by teacher Jerome Landre*/
+/* Some codes in the project where generated with the help of ChatGPT */
+
 const express = require('express');
 const path = require('path');
 const { engine }=require ('express-handlebars') // load the handlebars package for express
